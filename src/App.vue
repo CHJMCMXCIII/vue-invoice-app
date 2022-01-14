@@ -1,26 +1,59 @@
 <template>
-  <router-view />
+<div>
+  <div class="app flex flex-column">
+    <Navigation />
+    <div class="app-content flex flex-column">
+        <router-view />
+    </div>
+  </div>
+</div>
+
 </template>
 
+<script>
+import Navigation from "./components/Navigation"
+export default {
+  components: {
+    Navigation
+  }
+}
+</script>
+
+
 <style lang="scss">
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+html, body {
+   font-size: 16px;
+}
+
+.app {
   background-color: #141625;
+  min-height: 100vh;
+  @media(min-width: 900px) {
+    flex-direction: row !important;
+  }
+  .app-content {
+    padding: 0 1.25rem;
+    flex: 1;
+    position: relative;
+  }
 }
 
 button,
 .button {
   cursor: pointer;
-  padding: 16px 24px;
-  border-radius: 30px;
+  padding: 1rem 1.5rem;
+  border-radius: 2rem;
   border: none;
-  font-size: 12px;
-  margin-right: 8px;
+  margin-right: 0.5rem;
   color: #fff;
 }
 
@@ -56,12 +89,12 @@ button,
 
 .container {
   width: 100%;
-  padding: 40px 10px;
-  max-width: 850px;
+  padding: 2.5rem 0.625rem;
+  max-width: 45rem; // 720px
   margin: 0 auto;
 
   @media (min-width: 900px) {
-    padding-top: 72px;
+    padding-top: 4.5rem;
   }
 }
 
