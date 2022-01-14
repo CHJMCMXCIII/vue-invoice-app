@@ -11,6 +11,9 @@
                 <input id="billerStreetAddress" v-model="billerStreetAddress" required type="text">
             </div>
         </div>
+        <div class="location-details flex">
+            
+        </div>
     </form>
 </div>
 </template>
