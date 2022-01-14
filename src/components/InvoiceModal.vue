@@ -59,6 +59,14 @@
 
         <!-- Invoice Work Details -->
         <div class="invoice-work flex flex-column">
+            <div class="input flex flex-column">
+                <label for="paymentTerms">결제 조건 &#40;청구서 발행일 기준&#41;</label>
+                <select id="paymentTerms" v-model="paymentTerms" required type="text">
+                    <option value="null">--대금 결제일 설정--</option>
+                    <option value="30" selected>30일</option>
+                    <option value="60">60일</option>
+                </select>
+            </div>
             <div class="payment flex">
                 <div class="input flex flex-column">
                     <label for="invoiceDate">청구서 일자</label>
@@ -68,13 +76,6 @@
                     <label for="paymentDueDate">지불기한</label>
                     <input id="paymentDueDate" v-model="paymentDueDate" disabled type="text">
                 </div>                              
-            </div>
-            <div class="input flex flex-column">
-                <label for="paymentTerms">결제 조건 &#40;청구서 발행일 기준&#41;</label>
-                <select id="paymentTerms" v-model="paymentTerms" required type="text">
-                    <option value="30">30일</option>\
-                    <option value="60">60일</option>
-                </select>
             </div>
             <div class="input flex flex-column">
                 <label for="productDescription">제품 설명</label>
@@ -105,7 +106,7 @@
             </div>                       
         </div>
 
-        <!-- Save/Exit -->
+        <!-- Save/Close Modal -->
         <div class="save flex">
             <div class="left">
                 <button @click="closeInvoice" class="red">취소하기</button>
@@ -120,10 +121,12 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 export default {
     name: "invoiceModal",
     data() {
         return {
+            dateOptions: { year: "numeric", month: "short", day: "numeric" },
             billerStreetAddress: null,
             billerCity: null,
             billerZipCode: null,
@@ -145,6 +148,28 @@ export default {
             invoiceItemList: [],
             invoiceTotal: 0,            
         }
+    },
+    created() {
+
+        // 현재 날짜 가져오기
+        this.invoiceDateUnix = Date.now();
+        this.invoiceDate = new Date(this.invoiceDateUnix).toLocaleDateString('ko-KR', this.dateOptions);
+
+        
+    },
+    methods: {
+        ...mapMutations(['TOGGLE_INVOICE']),
+        closeInvoice() {
+            this.TOGGLE_INVOICE()
+        },
+    },
+    watch: {
+        // 지급 기한 계산
+        paymentTerms() {
+            const futureDate = new Date();
+            this.paymentDueDateUnix = futureDate.setDate(futureDate.getDate() + parseInt(this.paymentTerms))
+            this.paymentDueDate = new Date(this.paymentDueDateUnix).toLocaleDateString('ko-KR', this.dateOptions);
+        }
     }
 }
 </script>
@@ -156,8 +181,11 @@ export default {
         left: 0;
         background-color: transparent;
         width: 100%;
-        height: 100%;
-        overflow-y: scroll;
+        height: 100vh;
+        overflow: scroll;
+        &::-webkit-scrollbar {
+            display: none;
+        }
         @media(min-width: 900px) {
             left: 5.625rem;
         }
@@ -218,7 +246,7 @@ export default {
                         .table-heading,
                         .table-items {
                             gap: 1rem;
-                            font-size: 0.75rem;
+                            font-size: 0.825rem;
 
                             .item-name {
                                 flex-basis: 50%;
@@ -291,7 +319,7 @@ export default {
         }
 
         label {
-            font-size: 0.75rem;
+            font-size: 0.825rem;
             margin-bottom: 0.375rem;
         }
 
