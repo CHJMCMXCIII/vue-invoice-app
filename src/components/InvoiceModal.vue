@@ -61,7 +61,7 @@
         <div class="invoice-work flex flex-column">
             <div class="input flex flex-column">
                 <label for="paymentTerms">결제 조건 &#40;청구서 발행일 기준&#41;</label>
-                <select id="paymentTerms" v-model="paymentTerms" required type="text">
+                <select id="paymentTerms" v-model="paymentTerms" required>
                     <option value="null">--대금 결제일 설정--</option>
                     <option value="30" selected>30일</option>
                     <option value="60">60일</option>
@@ -88,13 +88,13 @@
                         <th class="item-name">이름</th>
                         <th class="qty">수량</th>
                         <th class="price">가격</th>
-                        <th class="total">총합</th>
+                        <th class="total">총 금액</th>
                     </tr>
                     <tr class="table-items flex" v-for="(item, index) in invoiceItemList" :key="index">
                         <td class="item-name"><input type="text" v-model="item.itemName"></td>
                         <td class="qty"><input type="text" v-model="item.qty"></td>
                         <td class="price"><input type="text" v-model="item.price"></td>
-                        <td class="total flex">${{item.total = item.qty * item.price}}</td>
+                        <td class="total flex">{{ (item.total = item.qty * item.price).toLocaleString('ko-KR') }} 원</td>
                         <img @click="deleteInvoiceItem(item.id)" src="@/assets/icon-delete.svg" alt="상품 제거하기 아이콘">
 
                     </tr>
@@ -121,7 +121,9 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
+import db from "../firebase/firebaseInit";
+import { mapMutations } from "vuex";
+import { uid } from "uid";
 export default {
     name: "invoiceModal",
     data() {
@@ -161,6 +163,78 @@ export default {
         ...mapMutations(['TOGGLE_INVOICE']),
         closeInvoice() {
             this.TOGGLE_INVOICE()
+        },
+
+        addNewInvoiceItem() {
+            this.invoiceItemList.push({
+                id: uid(),
+                itemName: "",
+                qty: "",
+                price: 0,
+                total: 0,
+            })
+        },
+
+        deleteInvoiceItem(id) {
+            this.invoiceItemList = this.invoiceItemList.filter(item => item.id !== id)
+        },
+
+        calInvoiceTotal() {
+            this.invoiceTotal = 0;
+            this.invoiceItemList.forEach(item => {
+                this.invoiceTotal += item.total;
+            });
+        },
+
+        publishInvoice() {
+            this.invoicePending = true;
+
+        },
+
+        saveDraft() {
+            this.invoiceDraft = true;
+        },
+
+        async uploadInvoice() {
+            if (this.invoiceItemList.length <= 0) {
+                alert('상품명이 채워져 있는지 확인해주세요!');
+                return;
+            }
+
+            this.calInvoiceTotal();
+
+            const dataBase = db.collection('invoices').doc();
+
+            await dataBase.set({
+                invoiceId: uid(),
+                billerStreetAddress: this.billerStreetAddress,
+                billerCity: this.billerCity,
+                billerZipCode: this.billerZipCode,
+                billerCountry: this.billerCountry,
+                clientName: this.clientName,
+                clientEmail: this.clientEmail,
+                clientStreetAddress: this.clientStreetAddress,
+                clientCity: this.clientCity,
+                clientZipCode: this.clientZipCode,
+                clientCountry: this.clientCountry,
+                invoiceDate: this.invoiceDate,
+                invoiceDateUnix: this.invoiceDateUnix,
+                paymentTerms: this.paymentTerms,
+                paymentDueDate: this.paymentDueDate,
+                paymentDueDateUnix: this.paymentDueDateUnix,
+                productDescription: this.productDescription,
+                invoiceItemList: this.invoiceItemList,
+                invoiceTotal: this.invoiceTotal,
+                invoicePending: this.invoicePending,
+                invoiceDraft: this.invoiceDraft,
+                invoicePaid: null,
+            });
+
+            this.TOGGLE_INVOICE();
+        },
+
+        submitForm() {
+            this.uploadInvoice();            
         },
     },
     watch: {
@@ -279,6 +353,7 @@ export default {
                             margin-bottom: 1.5rem;
 
                             img {
+                                cursor: pointer;
                                 position: absolute;
                                 top: 0.9375rem;
                                 right: 0;
