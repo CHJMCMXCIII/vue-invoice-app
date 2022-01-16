@@ -110,11 +110,11 @@
         <!-- Save/Close Modal -->
         <div class="save flex">
             <div class="left">
-                <button @click="closeInvoice" class="red">취소하기</button>
+                <button type="button" @click="closeInvoice" class="red">취소하기</button>
             </div>
             <div class="right flex">
-                <button @click="saveDraft" class="dark-purple">초안 저장하기</button>
-                <button @click="publishInvoice" class="purple">청구서 발행하기</button>
+                <button type="submit" @click="saveDraft" class="dark-purple">초안 저장하기</button>
+                <button type="submit" @click="publishInvoice" class="purple">청구서 발행하기</button>
             </div>
         </div>
     </form>
@@ -167,7 +167,13 @@ export default {
         
     },
     methods: {
-        ...mapMutations(['TOGGLE_INVOICE']),
+        ...mapMutations(["TOGGLE_INVOICE", "TOGGLE_MODAL"]),
+
+        checkClick(e) {
+            if (e.target === this.$refs.invoiceWrap) {
+                this.TOGGLE_MODAL();
+            }
+        },
         closeInvoice() {
             this.TOGGLE_INVOICE()
         },
