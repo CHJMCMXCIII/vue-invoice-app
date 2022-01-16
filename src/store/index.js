@@ -1,21 +1,70 @@
 import { createStore } from 'vuex'
+import db from "../firebase/firebaseInit";
 
-
-// Vuex 상태 관리
+// Vuex
 export default createStore({
+  // 상태 관리
   state: {
+    invoiceData: [],
     invoiceModal: null,
     modalActive: null,
+    invoicesLoaded: null,
   },
+  // 변이
   mutations: {
     TOGGLE_INVOICE(state) {
       state.invoiceModal = !state.invoiceModal
     },
     TOGGLE_MODAL(state) {
       state.modalActive = !state.modalActive;
-    }
+    },
+    SET_INVOICE_DATA(state, loadedData) {
+      state.invoiceData.push(loadedData);
+    },
+    INVOICES_LOADED(state) {
+      state.invoicesLoaded = true;
+    },
   },
+  // 액션으로 변이에 대한 비동기 진행 (commit)
   actions: {
+    async GET_INVOICES({commit, state}) {
+      const getData = db.collection('invoices');
+      const results = await getData.get();
+      results.forEach(doc => {
+        // https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/some
+        if (!state.invoiceData.some(invoice => invoice.docId === doc.id)) {
+          const data = {
+            docId: doc.id,
+            invoiceId: doc.data().invoiceId,
+            billerStreetAddress: doc.data().billerStreetAddress,
+            billerCity: doc.data().billerCity,
+            billerZipCode: doc.data().billerZipCode,
+            billerCountry: doc.data().billerCountry,
+            clientName: doc.data().clientName,
+            clientEmail: doc.data().clientEmail,
+            clientStreetAddress: doc.data().clientStreetAddress,
+            clientCity: doc.data().clientCity,
+            clientZipCode: doc.data().clientZipCode,
+            clientCountry: doc.data().clientCountry,
+            invoiceDateUnix: doc.data().invoiceDateUnix,
+            invoiceDate: doc.data().invoiceDate,
+            paymentTerms: doc.data().paymentTerms,
+            paymentDueDateUnix: doc.data().paymentDueDateUnix,
+            paymentDueDate: doc.data().paymentDueDate,
+            productDescription: doc.data().productDescription,
+            invoiceItemList: doc.data().invoiceItemList,
+            invoiceTotal: doc.data().invoiceTotal,
+            invoicePending: doc.data().invoicePending,
+            invoiceDraft: doc.data().invoiceDraft,
+            invoicePaid: doc.data().invoicePaid,
+          };
+          // 변이에 대한 비동기 작업을 위해 사용
+          // https://vuex.vuejs.org/kr/guide/actions.html
+          commit('SET_INVOICE_DATA', data);
+        }
+      });
+      commit('INVOICES_LOADED')
+    },
   },
   modules: {
   }

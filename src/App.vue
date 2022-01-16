@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-if="invoicesLoaded">
   <div class="app flex flex-column">
     <Navigation />
     <div class="app-content flex flex-column">
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import Navigation from "./components/Navigation"
 import InvoiceModal from "./components/InvoiceModal"
 import Modal from "./components/Modal";
@@ -25,9 +25,16 @@ export default {
     InvoiceModal,
     Modal,
   },
+  created() {
+    this.GET_INVOICES();
+  },
+
+  methods: {
+    ...mapActions(['GET_INVOICES']),
+  },
   
   computed: {
-    ...mapState(['invoiceModal', 'modalActive'])
+    ...mapState(['invoiceModal', 'modalActive', 'invoicesLoaded'])
   }
 }
 </script>
@@ -134,16 +141,16 @@ button,
 .status-button {
   &::before {
     content: "";
-    width: 10px;
-    height: 10px;
+    width: 0.625rem;
+    height: 0.625rem;
     border-radius: 50%;
-    margin-right: 8px;
+    margin-right: 0.5rem;
   }
-  font-size: 12px;
-  margin-right: 30px;
+  font-size: 0.75rem;
+  margin-right: 1rem;
   align-items: center;
-  padding: 8px 30px;
-  border-radius: 10px;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.625rem;
 }
 
 .paid {

@@ -25,11 +25,17 @@
         </div>
       </div>
     </div>
+
+    <!-- Invoice 목록 -->
+    <div>
+      <Invoice v-for="(invoice, index) in invoiceData" v-bind:invoice="invoice" v-bind:key="index" />
+    </div>
   </div>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapState } from 'vuex';
+import Invoice from '../components/Invoice';
 export default {
   name: "Home",
   data() {
@@ -37,7 +43,9 @@ export default {
       filterMenu: null,
     }
   },
-  components: {},
+  components: {
+    Invoice,
+  },
   methods: {
     ...mapMutations(['TOGGLE_INVOICE']),
     newInvoice() {
@@ -48,6 +56,9 @@ export default {
       this.filterMenu = !this.filterMenu;
     },
   },
+  computed: {
+    ...mapState(['invoiceData']),
+  }
 };
 </script>
 

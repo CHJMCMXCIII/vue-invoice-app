@@ -5,7 +5,7 @@
               정말 취소할까요?<br>작성하셨던 내용은 저장되지 않아요.
           </p>
           <div class="actions flex">
-              <button type="button" @click="closeModal" class="purple">다시 작성하기</button>
+              <button type="button" @click="closeModal" class="purple">계속 작성하기</button>
               <button type="button" @click="closeInvoice" class="red">닫기</button>
           </div>
       </div>
