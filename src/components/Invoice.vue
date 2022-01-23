@@ -3,7 +3,7 @@
     <!-- 클릭시 해당 라우터로 이동됨. -->
     <router-link class="invoice flex" v-bind:to="{ name: 'Invoice', params: { invoiceId: invoice.invoiceId } }">
         <div class="left flex">
-            <span class="tracking-number">#{{ invoice.invoiceId }}</span>
+            <span class="tracking-number">{{ invoice.invoiceId }}</span>
             <span class="due-date">{{ invoice.paymentDueDate }}</span>
             <span class="person">{{ invoice.clientName }}</span>
         </div>
@@ -57,6 +57,7 @@ export default {
             }
 
             .tracking-number {
+                font-size: 0.75rem;
                 text-transform: uppercase;
             }
         }

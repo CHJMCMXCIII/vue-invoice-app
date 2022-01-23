@@ -3,12 +3,12 @@
     <!-- Header -->
     <div class="header flex">
       <div class="left flex flex-column">
-        <h1>Invoices</h1>
-        <span>There are 4 total invoices</span>
+        <h1>청구서 목록</h1>
+        <span>현재 총 2개의 청구서가 있어요.</span>
       </div>
       <div class="right flex">
         <div @click="toggleFilterMenu" class="filter flex">
-          <span>Filter by status</span>
+          <span>상태별 보기</span>
           <img src="@/assets/icon-arrow-down.svg" alt="정렬하기 아이콘">
           <ul v-show="filterMenu" class="filter-menu">
             <li>Draft</li>
@@ -21,14 +21,19 @@
           <div class="inner-button flex">
             <img src="@/assets/icon-plus.svg" alt="새로운 영수증 만들기 아이콘">
           </div>
-          <span>New Invoice</span>
+          <p>생성하기</p>
         </div>
       </div>
     </div>
 
     <!-- Invoice 목록 -->
-    <div>
+    <div v-if="invoiceData.length > 3">
       <Invoice v-for="(invoice, index) in invoiceData" v-bind:invoice="invoice" v-bind:key="index" />
+    </div>
+    <div v-else class="empty flex flex-column">
+      <img src="@/assets/illustration-empty.svg" alt="청구서 비어짐 일러스트">
+      <h3>청구서 목록이 비어있어요.</h3>
+      <p>&lt;생성하기&gt; 버튼을 눌러 새로운 청구서를 만들어보세요!</p>
     </div>
   </div>
 </template>
@@ -118,7 +123,7 @@ export default {
       }
 
       .button {
-        padding: 0.5rem 0.625rem;
+        padding: 0.5rem 1rem;
         background-color: #7c5dfa;
         border-radius: 40px;
 
@@ -135,11 +140,38 @@ export default {
             
           }
         }
+
+        
+        p {
+          margin-bottom: 0.125rem;
+        }
       }
     }
 
     @media(min-width: 900px) {
       flex-direction: row;
+    }
+  }
+
+  .empty {
+    margin-top: 10rem;
+    align-items: center;
+
+    img {
+      width: 16.5rem;
+      height: auto;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin: 2.5rem 0 0 0;
+    }
+
+    p {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: normal;
     }
   }
 }
