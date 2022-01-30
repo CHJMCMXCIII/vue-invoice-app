@@ -9,6 +9,7 @@ export default createStore({
     invoiceModal: null,
     modalActive: null,
     invoicesLoaded: null,
+    currentInvoiceArray: null,
   },
   // 변이
   mutations: {
@@ -23,6 +24,11 @@ export default createStore({
     },
     INVOICES_LOADED(state) {
       state.invoicesLoaded = true;
+    },
+    SET_CURRENT_INVOICE(state, payload) {
+      state.currentInvoiceArray = state.invoiceData.filter(invoice => {
+        return invoice.invoiceId === payload;
+      })
     },
   },
   // 액션으로 변이에 대한 비동기 진행 (commit)

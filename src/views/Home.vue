@@ -27,7 +27,7 @@
     </div>
 
     <!-- Invoice 목록 -->
-    <div v-if="invoiceData.length > 3">
+    <div v-if="invoiceData.length > 0">
       <Invoice v-for="(invoice, index) in invoiceData" v-bind:invoice="invoice" v-bind:key="index" />
     </div>
     <div v-else class="empty flex flex-column">
