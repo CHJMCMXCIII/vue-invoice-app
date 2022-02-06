@@ -281,6 +281,8 @@ export default {
             this.loading = false;
 
             this.TOGGLE_INVOICE();
+
+            this.GET_INVOICES();
         },
 
 

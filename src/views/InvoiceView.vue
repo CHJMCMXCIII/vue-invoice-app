@@ -27,7 +27,7 @@
                 <button v-if="currentInvoice.invoicePending" @click="updateStatusToPaid(currentInvoice.docId)" class="green">
                     납부처리
                 </button>
-                <button v-if="currentInvoice.invoiceDraft || currentInvoice.invoicePaid" @click="updateStatusToPending" class="orange">
+                <button v-if="currentInvoice.invoiceDraft || currentInvoice.invoicePaid" @click="updateStatusToPending(currentInvoice.docId)" class="orange">
                     납부안됨처리
                 </button>
             </div>
@@ -104,9 +104,9 @@ export default {
         this.getCurrentInvoice();
     },
     methods: {
-        ...mapMutations(['SET_CURRENT_INVOICE', "TOGGLE_EDIT_INVOICE", "TOGGLE_INVOICE"]),
+        ...mapMutations(["SET_CURRENT_INVOICE", "TOGGLE_EDIT_INVOICE", "TOGGLE_INVOICE"]),
 
-        ...mapActions(['DELETE_INVOICE']),
+        ...mapActions(["DELETE_INVOICE", "UPDATE_STATUS_TO_PENDING", "UPDATE_STATUS_TO_PAID"]),
 
         getCurrentInvoice() {
             this.SET_CURRENT_INVOICE(this.$route.params.invoiceId);
@@ -120,7 +120,15 @@ export default {
         async deleteInvoice(docId) {
             await this.DELETE_INVOICE(docId);
             this.$router.push({name: "Home"});
-        }
+        },
+
+        updateStatusToPaid(docId) {
+            this.UPDATE_STATUS_TO_PAID(docId);
+        },
+
+        updateStatusToPending(docId) {
+            this.UPDATE_STATUS_TO_PENDING(docId);
+        },
     },
     computed: {
         ...mapState(["currentInvoiceArray", "editInvoice"])
@@ -162,10 +170,12 @@ export default {
 
             .left {
                 align-items: center;
+                div {
+                    margin-left: 1rem;
+                }
                 
                 span {
                     color: #dfe3fa;
-                    margin-right: 1rem;
                 }
             }
 
