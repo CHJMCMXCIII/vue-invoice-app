@@ -4,17 +4,17 @@
     <div class="header flex">
       <div class="left flex flex-column">
         <h1>청구서 목록</h1>
-        <span>현재 총 2개의 청구서가 있어요.</span>
+        <span>현재 총 {{ invoiceData.length }}개의 청구서가 있어요.</span>
       </div>
       <div class="right flex">
         <div @click="toggleFilterMenu" class="filter flex">
-          <span>상태별 보기</span>
+          <span>상태별 보기<span v-if="filteredInvoice"> : {{ filteredInvoice }}</span></span>
           <img src="@/assets/icon-arrow-down.svg" alt="정렬하기 아이콘">
           <ul v-show="filterMenu" class="filter-menu">
-            <li>Draft</li>
-            <li>Pending</li>
-            <li>Paid</li>
-            <li>Clear Filter</li>
+            <li @click="filteredInvoices">초안</li>
+            <li @click="filteredInvoices">납부안됨</li>
+            <li @click="filteredInvoices">납부됨</li>
+            <li @click="filteredInvoices">모두</li>
           </ul> 
         </div>
         <div @click="newInvoice" class="button flex">
@@ -28,7 +28,7 @@
 
     <!-- Invoice 목록 -->
     <div v-if="invoiceData.length > 0">
-      <Invoice v-for="(invoice, index) in invoiceData" v-bind:invoice="invoice" v-bind:key="index" />
+      <Invoice v-for="(invoice, index) in filteredData" v-bind:invoice="invoice" v-bind:key="index" />
     </div>
     <div v-else class="empty flex flex-column">
       <img src="@/assets/illustration-empty.svg" alt="청구서 비어짐 일러스트">
@@ -46,6 +46,7 @@ export default {
   data() {
     return {
       filterMenu: null,
+      filteredInvoice: null,
     }
   },
   components: {
@@ -60,9 +61,36 @@ export default {
     toggleFilterMenu() {
       this.filterMenu = !this.filterMenu;
     },
+
+    filteredInvoices(e) {
+      if (e.target.innerText === '모두') {
+        this.filteredInvoice = null;
+        return;
+      }
+
+      this.filteredInvoice = e.target.innerText;
+    },
   },
   computed: {
     ...mapState(['invoiceData']),
+
+    filteredData() {
+      return this.invoiceData.filter(invoice => {
+        if (this.filteredInvoice === "초안") {
+          return invoice.invoiceDraft === true;
+        }
+
+        if (this.filteredInvoice === "납부안됨") {
+          return invoice.invoicePending === true;
+        }
+
+        if (this.filteredInvoice === "납부됨") {
+          return invoice.invoicePaid === true;
+        }
+
+        return invoice;
+      })
+    }
   }
 };
 </script>
